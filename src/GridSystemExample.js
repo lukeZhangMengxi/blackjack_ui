@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 var dealerCards = ["1#0", "12#1", "9#3"];
 var playerCards = ["5#2", "14#0", "10#2"];
+var buttons = ["Hit", "Stand"];
 
 class GridSystemExample extends Component {
 
@@ -43,6 +44,18 @@ class GridSystemExample extends Component {
               </Col>
             )})
           }
+        </Row>
+        <Row style={{position: "relative", top: 100}}>
+          {
+            buttons.map((element) => { return (
+              <Col sm={2} offset={2}>
+                <Button>{element}</Button>
+              </Col>
+            )})
+          }
+        </Row>
+        <Row style={{position: "relative", top: 150}}>
+          <Col>-</Col>
         </Row>
       </Container>
 		)
