@@ -1,10 +1,11 @@
 import React from 'react';
-import './App.css';
+import GridSystemExample from './GridSystemExample.js';
 
 function App() {
   return (
     <div className="App">
-      <p>Hello World!</p>
+      <p>BlackJack UI: Hello World!</p>
+      <GridSystemExample/>
     </div>
   );
 }
