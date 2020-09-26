@@ -5,6 +5,10 @@ import { Dialog, DialogActions, DialogTitle } from '@material-ui/core';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const stages = {
+  IDLE: 'summer',
+  PLAYER_TURN: 'winter'
+}
 
 class GridSystemExample extends Component {
 
@@ -13,7 +17,8 @@ class GridSystemExample extends Component {
     playerCards: [],
     dealerCards: [],
     showResult: false,
-    result: ''
+    result: '',
+    currentStage: stages.IDLE
   }
 
   handleClickOpen() {
@@ -34,7 +39,7 @@ class GridSystemExample extends Component {
         axios.get(`http://localhost:8080/game/${rsp.data}/status`)
         .then((rsp) => {
             console.log(rsp);
-            this.setState({ playerCards: rsp.data[0], dealerCards: rsp.data[1] });
+            this.setState({ playerCards: rsp.data[0], dealerCards: rsp.data[1], currentStage: stages.PLAYER_TURN });
         });
       },
       (error) => { console.log(error); }
@@ -79,6 +84,7 @@ class GridSystemExample extends Component {
               }
               
               this.handleClickOpen();
+              this.setState({ currentStage: stages.IDLE });
             });
         });
       },
@@ -123,15 +129,9 @@ class GridSystemExample extends Component {
           }
         </Row>
         <Row style={{position: "relative", top: 100}}>
-          <Col sm={2} offset={2}>
-            <Button onClick={() => this.start()}>Start</Button>
-          </Col>
-          <Col sm={2} offset={2}>
-            <Button onClick={() => this.hit()}>Hit</Button>
-          </Col>
-          <Col sm={2} offset={2}>
-            <Button onClick={() => this.stand()}>Stand</Button>
-          </Col>
+          { this.state.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.start()}>Start</Button> </Col> }
+          { this.state.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => this.hit()}>Hit</Button> </Col> }
+          { this.state.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => this.stand()}>Stand</Button> </Col> }
         </Row>
         <Row style={{position: "relative", top: 150}}>
           <Dialog
