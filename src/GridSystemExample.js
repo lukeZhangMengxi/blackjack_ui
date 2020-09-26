@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 class GridSystemExample extends Component {
 
   state = {
+    gameId: '',
     playerCards: [],
     dealerCards: []
   }
@@ -18,10 +19,27 @@ class GridSystemExample extends Component {
     .then(
       (rsp) => {
         console.log(rsp);
+        this.setState({ gameId: rsp.data });
         axios.get(`http://localhost:8080/game/${rsp.data}/status`)
         .then((rsp) => {
             console.log(rsp);
             this.setState({ playerCards: rsp.data[0], dealerCards: rsp.data[1] });
+        });
+      },
+      (error) => { console.log(error); }
+    );
+  }
+
+  hit() {
+    console.log('Starting the game!');
+    axios.post(`http://localhost:8080/game/${this.state.gameId}/hit?playerId=a6682fed-e764-43ff-8795-f2f2c7a45c84`)
+    .then(
+      (rsp) => {
+        console.log(rsp);
+        axios.get(`http://localhost:8080/game/${this.state.gameId}/status`)
+        .then((rsp) => {
+            console.log(rsp);
+            this.setState({ playerCards: rsp.data[0] });
         });
       },
       (error) => { console.log(error); }
@@ -67,6 +85,9 @@ class GridSystemExample extends Component {
         <Row style={{position: "relative", top: 100}}>
           <Col sm={2} offset={2}>
             <Button onClick={() => this.start()}>Start</Button>
+          </Col>
+          <Col sm={2} offset={2}>
+            <Button onClick={() => this.hit()}>Hit</Button>
           </Col>
         </Row>
         <Row style={{position: "relative", top: 150}}>
