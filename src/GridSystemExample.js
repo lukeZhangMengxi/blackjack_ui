@@ -6,8 +6,8 @@ import { Dialog, DialogActions, DialogTitle } from '@material-ui/core';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const stages = {
-  IDLE: 'summer',
-  PLAYER_TURN: 'winter'
+  IDLE: 'IDLE',
+  PLAYER_TURN: 'PLAYER_TURN'
 }
 
 class GridSystemExample extends Component {
