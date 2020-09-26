@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import React, {Component} from 'react';
+import { Dialog, DialogActions, DialogTitle, DialogContent, DialogContentText } from '@material-ui/core';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -10,7 +11,17 @@ class GridSystemExample extends Component {
   state = {
     gameId: '',
     playerCards: [],
-    dealerCards: []
+    dealerCards: [],
+    showResult: false,
+    result: ''
+  }
+
+  handleClickOpen() {
+    this.setState({ showResult: true });
+  }
+
+  handleClose() {
+    this.setState({ showResult: false });
   }
 
   start() {
@@ -40,6 +51,35 @@ class GridSystemExample extends Component {
         .then((rsp) => {
             console.log(rsp);
             this.setState({ playerCards: rsp.data[0] });
+        });
+      },
+      (error) => { console.log(error); }
+    );
+  }
+
+  stand() {
+    console.log('Starting the game!');
+    axios.post(`http://localhost:8080/game/${this.state.gameId}/stand?playerId=a6682fed-e764-43ff-8795-f2f2c7a45c84`)
+    .then(
+      (rsp) => {
+        console.log(rsp);
+        axios.get(`http://localhost:8080/game/${this.state.gameId}/status`)
+        .then((rsp) => {
+            console.log(rsp);
+            this.setState({ dealerCards: rsp.data[1] });
+
+            axios.get(`http://localhost:8080/game/${this.state.gameId}/result?playerId=a6682fed-e764-43ff-8795-f2f2c7a45c84`)
+            .then((rsp) => {
+              if (rsp.data == 1) {
+                this.setState({ result: "You win!!!" });
+              } else if (rsp.data == 0) {
+                this.setState({ result: "Tied game!" });
+              } else if (rsp.data == -1) {
+                this.setState({ result: "You lose..." });
+              }
+              
+              this.handleClickOpen();
+            });
         });
       },
       (error) => { console.log(error); }
@@ -89,9 +129,27 @@ class GridSystemExample extends Component {
           <Col sm={2} offset={2}>
             <Button onClick={() => this.hit()}>Hit</Button>
           </Col>
+          <Col sm={2} offset={2}>
+            <Button onClick={() => this.stand()}>Stand</Button>
+          </Col>
         </Row>
         <Row style={{position: "relative", top: 150}}>
-          <Col>-</Col>
+          <Dialog
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            open={this.state.showResult}
+            onClose={this.handleClose}
+            BackdropProps={{
+                timeout: 500,
+            }}
+          >
+            <DialogTitle id="alert-dialog-title">{this.state.result}</DialogTitle>
+            <DialogActions>
+              <Button onClick={() => this.handleClose()} color="primary">
+                Okey
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Row>
       </Container>
 		)
