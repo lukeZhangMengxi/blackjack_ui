@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import React, {Component} from 'react';
-import { Dialog, DialogActions, DialogTitle, DialogContent, DialogContentText } from '@material-ui/core';
+import { Dialog, DialogActions, DialogTitle } from '@material-ui/core';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
