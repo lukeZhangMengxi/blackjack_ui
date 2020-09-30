@@ -1,11 +1,11 @@
 import React from 'react';
-import GridSystemExample from './GridSystemExample.js';
+import SinglePlayerUI from './SinglePlayerUI.js';
 
 function App() {
   return (
     <div className="App">
       <p>BlackJack UI: Hello World!</p>
-      <GridSystemExample/>
+      <SinglePlayerUI/>
     </div>
   );
 }

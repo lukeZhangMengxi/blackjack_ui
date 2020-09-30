@@ -7,13 +7,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const stages = {
   IDLE: 'IDLE',
+  BET: 'BET',
   PLAYER_TURN: 'PLAYER_TURN'
 }
 
-class GridSystemExample extends Component {
+class SinglePlayerUI extends Component {
 
   state = {
     gameId: '',
+    playerId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
     playerCards: [],
     dealerCards: [],
     showResult: false,
@@ -21,17 +23,12 @@ class GridSystemExample extends Component {
     currentStage: stages.IDLE
   }
 
-  handleClickOpen() {
-    this.setState({ showResult: true });
-  }
-
-  handleClose() {
-    this.setState({ showResult: false });
-  }
+  handleShowResult() { this.setState({ showResult: true }); }
+  handleCloseResult() { this.setState({ showResult: false }); }
 
   start() {
     console.log('Starting the game!');
-    axios.post('http://localhost:8080/game/start?playerId=a6682fed-e764-43ff-8795-f2f2c7a45c84')
+    axios.post(`http://localhost:8080/game/start?playerId=${this.state.playerId}`)
     .then(
       (rsp) => {
         console.log(rsp);
@@ -39,23 +36,31 @@ class GridSystemExample extends Component {
         axios.get(`http://localhost:8080/game/${rsp.data}/status`)
         .then((rsp) => {
             console.log(rsp);
-            this.setState({ playerCards: rsp.data[0], dealerCards: rsp.data[1], currentStage: stages.PLAYER_TURN });
+            this.setState({ playerCards: rsp.data.playerCards, dealerCards: rsp.data.dealerCards, currentStage: stages.BET });
         });
       },
       (error) => { console.log(error); }
     );
   }
 
+  bet(amount) {
+    axios.post(`http://localhost:8080/game/${this.state.gameId}/bet?playerId=${this.state.playerId}&bet=${amount}`)
+    .then(
+      (rsp) => { console.log(rsp); this.setState({ currentStage: stages.PLAYER_TURN }); },
+      (error) => { console.log(error); }
+    );
+  }
+
   hit() {
     console.log('Starting the game!');
-    axios.post(`http://localhost:8080/game/${this.state.gameId}/hit?playerId=a6682fed-e764-43ff-8795-f2f2c7a45c84`)
+    axios.post(`http://localhost:8080/game/${this.state.gameId}/hit?playerId=${this.state.playerId}`)
     .then(
       (rsp) => {
         console.log(rsp);
         axios.get(`http://localhost:8080/game/${this.state.gameId}/status`)
         .then((rsp) => {
             console.log(rsp);
-            this.setState({ playerCards: rsp.data[0] });
+            this.setState({ playerCards: rsp.data.playerCards });
         });
       },
       (error) => { console.log(error); }
@@ -64,26 +69,26 @@ class GridSystemExample extends Component {
 
   stand() {
     console.log('Starting the game!');
-    axios.post(`http://localhost:8080/game/${this.state.gameId}/stand?playerId=a6682fed-e764-43ff-8795-f2f2c7a45c84`)
+    axios.post(`http://localhost:8080/game/${this.state.gameId}/stand?playerId=${this.state.playerId}`)
     .then(
       (rsp) => {
         console.log(rsp);
         axios.get(`http://localhost:8080/game/${this.state.gameId}/status`)
         .then((rsp) => {
             console.log(rsp);
-            this.setState({ dealerCards: rsp.data[1] });
+            this.setState({ dealerCards: rsp.data.dealerCards });
 
-            axios.get(`http://localhost:8080/game/${this.state.gameId}/result?playerId=a6682fed-e764-43ff-8795-f2f2c7a45c84`)
+            axios.get(`http://localhost:8080/game/${this.state.gameId}/result?playerId=${this.state.playerId}`)
             .then((rsp) => {
-              if (rsp.data == 1) {
-                this.setState({ result: "You win!!!" });
-              } else if (rsp.data == 0) {
-                this.setState({ result: "Tied game!" });
-              } else if (rsp.data == -1) {
-                this.setState({ result: "You lose..." });
+              if (rsp.data.result === 1) {
+                this.setState({ result: "You win!!!\nNow your deposit is: " + rsp.data.newDeposit });
+              } else if (rsp.data.result === 0) {
+                this.setState({ result: "Tied game!\nNow your deposit is: " + rsp.data.newDeposit });
+              } else if (rsp.data.result === -1) {
+                this.setState({ result: "You lose...\nNow your deposit is: " + rsp.data.newDeposit });
               }
               
-              this.handleClickOpen();
+              this.handleShowResult();
               this.setState({ currentStage: stages.IDLE });
             });
         });
@@ -138,16 +143,33 @@ class GridSystemExample extends Component {
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
             open={this.state.showResult}
-            onClose={this.handleClose}
+            onClose={this.handleCloseResult}
             BackdropProps={{
                 timeout: 500,
             }}
           >
             <DialogTitle id="alert-dialog-title">{this.state.result}</DialogTitle>
             <DialogActions>
-              <Button onClick={() => this.handleClose()} color="primary">
+              <Button onClick={() => this.handleCloseResult()} color="primary">
                 Okey
               </Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            open={this.state.currentStage === stages.BET}
+            onClose={this.handleCloseBet}
+            BackdropProps={{
+                timeout: 500,
+            }}
+          >
+            <DialogTitle id="alert-dialog-title">Please select your bet amount:</DialogTitle>
+            <DialogActions>
+              <Button onClick={() => this.bet(10)} color="primary">10</Button>
+              <Button onClick={() => this.bet(50)} color="primary">50</Button>
+              <Button onClick={() => this.bet(100)} color="primary">100</Button>
+              <Button onClick={() => this.bet(500)} color="primary">500</Button>
             </DialogActions>
           </Dialog>
         </Row>
@@ -156,4 +178,4 @@ class GridSystemExample extends Component {
   }
 }
 
-export default GridSystemExample;
+export default SinglePlayerUI;
