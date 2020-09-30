@@ -81,11 +81,11 @@ class SinglePlayerUI extends Component {
             axios.get(`http://localhost:8080/game/${this.state.gameId}/result?playerId=${this.state.playerId}`)
             .then((rsp) => {
               if (rsp.data.result === 1) {
-                this.setState({ result: "You win!!!\nNow your deposit is: " + rsp.data.newDeposit });
+                this.setState({ result: "You win!!! Now your deposit is: " + rsp.data.newDeposit });
               } else if (rsp.data.result === 0) {
-                this.setState({ result: "Tied game!\nNow your deposit is: " + rsp.data.newDeposit });
+                this.setState({ result: "Tied game! Now your deposit is: " + rsp.data.newDeposit });
               } else if (rsp.data.result === -1) {
-                this.setState({ result: "You lose...\nNow your deposit is: " + rsp.data.newDeposit });
+                this.setState({ result: "You lose... Now your deposit is: " + rsp.data.newDeposit });
               }
               
               this.handleShowResult();
@@ -144,14 +144,12 @@ class SinglePlayerUI extends Component {
             aria-describedby="transition-modal-description"
             open={this.state.showResult}
             onClose={this.handleCloseResult}
-            BackdropProps={{
-                timeout: 500,
-            }}
+            BackdropProps={{ timeout: 500 }}
           >
             <DialogTitle id="alert-dialog-title">{this.state.result}</DialogTitle>
             <DialogActions>
               <Button onClick={() => this.handleCloseResult()} color="primary">
-                Okey
+                Okay
               </Button>
             </DialogActions>
           </Dialog>
@@ -159,10 +157,7 @@ class SinglePlayerUI extends Component {
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
             open={this.state.currentStage === stages.BET}
-            onClose={this.handleCloseBet}
-            BackdropProps={{
-                timeout: 500,
-            }}
+            BackdropProps={{ timeout: 500 }}
           >
             <DialogTitle id="alert-dialog-title">Please select your bet amount:</DialogTitle>
             <DialogActions>
