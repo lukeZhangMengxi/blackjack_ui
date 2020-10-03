@@ -8,7 +8,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const stages = {
   IDLE: 'IDLE',
   BET: 'BET',
-  PLAYER_TURN: 'PLAYER_TURN'
+  PLAYER_TURN: 'PLAYER_TURN',
+  PENDING: 'PENDING'
 }
 
 class SinglePlayerUI extends Component {
@@ -17,14 +18,33 @@ class SinglePlayerUI extends Component {
     gameId: '',
     playerId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
     playerCards: [],
+    playerDeposit: 0,
     dealerCards: [],
     showResult: false,
     result: '',
     currentStage: stages.IDLE
   }
 
-  handleShowResult() { this.setState({ showResult: true }); }
-  handleCloseResult() { this.setState({ showResult: false }); }
+  handleShowResultWithDelay(seconds) {
+    this.setState({ currentStage: stages.PENDING });
+
+    // Sleep to give player time to see the result
+    setTimeout(() => { this.setState({ showResult: true }) } , seconds*1000); 
+  }
+  handleCloseResult() {
+    this.setState({ 
+      showResult: false, playerCards: [], dealerCards: [],
+      currentStage: stages.IDLE
+    });
+  }
+
+  getPlayerInfo() {
+    axios.get(`http://localhost:8080/player/${this.state.playerId}`)
+    .then(
+      (rsp) => { this.setState({ playerDeposit: rsp.data.deposit }) },
+      (error) => { console.log(error); }
+    )
+  }
 
   start() {
     console.log('Starting the game!');
@@ -33,10 +53,13 @@ class SinglePlayerUI extends Component {
       (rsp) => {
         console.log(rsp);
         this.setState({ gameId: rsp.data });
-        axios.get(`http://localhost:8080/game/${rsp.data}/status`)
+        axios.get(`http://localhost:8080/game/${rsp.data}/status?playerId=${this.state.playerId}`)
         .then((rsp) => {
             console.log(rsp);
-            this.setState({ playerCards: rsp.data.playerCards, dealerCards: rsp.data.dealerCards, currentStage: stages.BET });
+            this.setState({ 
+              playerCards: rsp.data.playerCards, dealerCards: rsp.data.dealerCards,
+              playerDeposit: rsp.data.playerDeposit, currentStage: stages.BET
+            });
         });
       },
       (error) => { console.log(error); }
@@ -46,18 +69,23 @@ class SinglePlayerUI extends Component {
   bet(amount) {
     axios.post(`http://localhost:8080/game/${this.state.gameId}/bet?playerId=${this.state.playerId}&bet=${amount}`)
     .then(
-      (rsp) => { console.log(rsp); this.setState({ currentStage: stages.PLAYER_TURN }); },
+      (rsp) => { 
+        console.log(rsp);
+        this.setState({ 
+          playerDeposit: this.state.playerDeposit - amount,
+          currentStage: stages.PLAYER_TURN
+        });
+      },
       (error) => { console.log(error); }
     );
   }
 
   hit() {
-    console.log('Starting the game!');
     axios.post(`http://localhost:8080/game/${this.state.gameId}/hit?playerId=${this.state.playerId}`)
     .then(
       (rsp) => {
         console.log(rsp);
-        axios.get(`http://localhost:8080/game/${this.state.gameId}/status`)
+        axios.get(`http://localhost:8080/game/${this.state.gameId}/status?playerId=${this.state.playerId}`)
         .then((rsp) => {
             console.log(rsp);
             this.setState({ playerCards: rsp.data.playerCards });
@@ -73,7 +101,7 @@ class SinglePlayerUI extends Component {
     .then(
       (rsp) => {
         console.log(rsp);
-        axios.get(`http://localhost:8080/game/${this.state.gameId}/status`)
+        axios.get(`http://localhost:8080/game/${this.state.gameId}/status?playerId=${this.state.playerId}`)
         .then((rsp) => {
             console.log(rsp);
             this.setState({ dealerCards: rsp.data.dealerCards });
@@ -88,8 +116,8 @@ class SinglePlayerUI extends Component {
                 this.setState({ result: "You lose... Now your deposit is: " + rsp.data.newDeposit });
               }
               
-              this.handleShowResult();
-              this.setState({ currentStage: stages.IDLE });
+              this.handleShowResultWithDelay(3);
+              this.setState({ playerDeposit: rsp.data.newDeposit });
             });
         });
       },
@@ -97,10 +125,14 @@ class SinglePlayerUI extends Component {
     );
   }
 
+  componentDidMount() {
+    this.getPlayerInfo()
+  }
+
   render() {
 		return (
       <Container fluid>
-        <Row>
+        <Row style={{position: "relative", top: 20}}>
           <Col sm={1}>Dealer's Cards: </Col>
           {
             this.state.dealerCards.map((element) => { return (
@@ -115,10 +147,10 @@ class SinglePlayerUI extends Component {
             )})
           }
         </Row>
-        <Row style={{position: "relative", top: 20}}>
+        <Row style={{position: "relative", top: 50}}>
           <Col >VS</Col>
         </Row>
-        <Row style={{position: "relative", top: 50}}>
+        <Row style={{position: "relative", top: 100}}>
           <Col sm={1}>Your Cards: </Col>
           {
             this.state.playerCards.map((element) => { return (
@@ -133,7 +165,10 @@ class SinglePlayerUI extends Component {
             )})
           }
         </Row>
-        <Row style={{position: "relative", top: 100}}>
+        <Row style={{position: "relative", top: 120}}>
+          <Col>Current Deposit: {this.state.playerDeposit}</Col>
+        </Row>
+        <Row style={{position: "relative", top: 150}}>
           { this.state.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.start()}>Start</Button> </Col> }
           { this.state.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => this.hit()}>Hit</Button> </Col> }
           { this.state.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => this.stand()}>Stand</Button> </Col> }
