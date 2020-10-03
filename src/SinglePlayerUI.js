@@ -38,6 +38,14 @@ class SinglePlayerUI extends Component {
     });
   }
 
+  getPlayerInfo() {
+    axios.get(`http://localhost:8080/player/${this.state.playerId}`)
+    .then(
+      (rsp) => { this.setState({ playerDeposit: rsp.data.deposit }) },
+      (error) => { console.log(error); }
+    )
+  }
+
   start() {
     console.log('Starting the game!');
     axios.post(`http://localhost:8080/game/start?playerId=${this.state.playerId}`)
@@ -115,6 +123,10 @@ class SinglePlayerUI extends Component {
       },
       (error) => { console.log(error); }
     );
+  }
+
+  componentDidMount() {
+    this.getPlayerInfo()
   }
 
   render() {
