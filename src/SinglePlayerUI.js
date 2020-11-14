@@ -18,7 +18,7 @@ class SinglePlayerUI extends Component {
     gameId: '',
     playerId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
     playerCards: [],
-    playerDeposit: 0,
+    playerBalance: 0,
     dealerCards: [],
     showResult: false,
     result: '',
@@ -41,7 +41,7 @@ class SinglePlayerUI extends Component {
   getPlayerInfo() {
     axios.get(`http://localhost:8080/player/${this.state.playerId}`)
     .then(
-      (rsp) => { this.setState({ playerDeposit: rsp.data.deposit }) },
+      (rsp) => { this.setState({ playerBalance: rsp.data.balance }) },
       (error) => { console.log(error); }
     )
   }
@@ -58,7 +58,7 @@ class SinglePlayerUI extends Component {
             console.log(rsp);
             this.setState({ 
               playerCards: rsp.data.playerCards, dealerCards: rsp.data.dealerCards,
-              playerDeposit: rsp.data.playerDeposit, currentStage: stages.BET
+              playerBalance: rsp.data.playerbalance, currentStage: stages.BET
             });
         });
       },
@@ -72,7 +72,7 @@ class SinglePlayerUI extends Component {
       (rsp) => { 
         console.log(rsp);
         this.setState({ 
-          playerDeposit: this.state.playerDeposit - amount,
+          playerBalance: this.state.playerBalance - amount,
           currentStage: stages.PLAYER_TURN
         });
       },
@@ -109,15 +109,15 @@ class SinglePlayerUI extends Component {
             axios.get(`http://localhost:8080/game/${this.state.gameId}/result?playerId=${this.state.playerId}`)
             .then((rsp) => {
               if (rsp.data.result === 1) {
-                this.setState({ result: "You win!!! Now your deposit is: " + rsp.data.newDeposit });
+                this.setState({ result: "You win!!! Now your balance is: " + rsp.data.newBalance });
               } else if (rsp.data.result === 0) {
-                this.setState({ result: "Tied game! Now your deposit is: " + rsp.data.newDeposit });
+                this.setState({ result: "Tied game! Now your balance is: " + rsp.data.newBalance });
               } else if (rsp.data.result === -1) {
-                this.setState({ result: "You lose... Now your deposit is: " + rsp.data.newDeposit });
+                this.setState({ result: "You lose... Now your balance is: " + rsp.data.newBalance });
               }
               
-              this.handleShowResultWithDelay(3);
-              this.setState({ playerDeposit: rsp.data.newDeposit });
+              this.handleShowResultWithDelay(1.5);
+              this.setState({ playerBalance: rsp.data.newBalance });
             });
         });
       },
@@ -166,7 +166,7 @@ class SinglePlayerUI extends Component {
           }
         </Row>
         <Row style={{position: "relative", top: 120}}>
-          <Col>Current Deposit: {this.state.playerDeposit}</Col>
+          <Col>Current Balance: {this.state.playerBalance}</Col>
         </Row>
         <Row style={{position: "relative", top: 150}}>
           { this.state.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.start()}>Start</Button> </Col> }
