@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import React, {Component} from 'react';
-import { Dialog, DialogActions, DialogTitle } from '@material-ui/core';
+import { Dialog, DialogActions, DialogTitle, TextField } from '@material-ui/core';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const stages = {
+  LOGIN: 'LOGIN',
   IDLE: 'IDLE',
   BET: 'BET',
   PLAYER_TURN: 'PLAYER_TURN',
@@ -22,7 +23,9 @@ class SinglePlayerUI extends Component {
     dealerCards: [],
     showResult: false,
     result: '',
-    currentStage: stages.IDLE
+    currentStage: stages.LOGIN,
+    jwt: '',
+    displayPlayerName: ''
   }
 
   handleShowResultWithDelay(seconds) {
@@ -38,27 +41,45 @@ class SinglePlayerUI extends Component {
     });
   }
 
-  getPlayerInfo() {
-    axios.get(`http://localhost:8080/player/${this.state.playerId}`)
+  login(email, password) {
+    axios.post(`http://localhost:8080/player/login?email=${email}&password=${password}`)
     .then(
-      (rsp) => { this.setState({ playerBalance: rsp.data.balance }) },
+      (rsp) => { 
+        if (rsp.status === 200) {
+          this.setState({ jwt: rsp.data.token, playerId: rsp.data.playerId, currentStage: stages.IDLE })
+
+          this.getPlayerInfo()
+        }
+        else {
+          console.log("Bad response: " + rsp);
+        }
+      },
+      (error) => { console.log(error); }
+    )
+  }
+
+  getPlayerInfo() {
+    axios.get(`http://localhost:8080/player/${this.state.playerId}`, {"headers": {"jwt" : this.state.jwt}})
+    .then(
+      (rsp) => { this.setState({ playerBalance: rsp.data.balance, displayPlayerName: rsp.data.displayName }); },
       (error) => { console.log(error); }
     )
   }
 
   start() {
     console.log('Starting the game!');
-    axios.post(`http://localhost:8080/game/start?playerId=${this.state.playerId}`)
+    console.log(this.state.jwt);
+    axios.post(`http://localhost:8080/game/start?playerId=${this.state.playerId}`, null, {"headers": {"jwt" : this.state.jwt}})
     .then(
       (rsp) => {
         console.log(rsp);
         this.setState({ gameId: rsp.data });
-        axios.get(`http://localhost:8080/game/${rsp.data}/status?playerId=${this.state.playerId}`)
+        axios.get(`http://localhost:8080/game/${rsp.data}/status?playerId=${this.state.playerId}`, {"headers": {"jwt" : this.state.jwt}})
         .then((rsp) => {
             console.log(rsp);
             this.setState({ 
               playerCards: rsp.data.playerCards, dealerCards: rsp.data.dealerCards,
-              playerBalance: rsp.data.playerbalance, currentStage: stages.BET
+              currentStage: stages.BET
             });
         });
       },
@@ -67,10 +88,9 @@ class SinglePlayerUI extends Component {
   }
 
   bet(amount) {
-    axios.post(`http://localhost:8080/game/${this.state.gameId}/bet?playerId=${this.state.playerId}&bet=${amount}`)
+    axios.post(`http://localhost:8080/game/${this.state.gameId}/bet?playerId=${this.state.playerId}&bet=${amount}`, null, {"headers": {"jwt" : this.state.jwt}})
     .then(
-      (rsp) => { 
-        console.log(rsp);
+      (rsp) => {
         this.setState({ 
           playerBalance: this.state.playerBalance - amount,
           currentStage: stages.PLAYER_TURN
@@ -81,11 +101,11 @@ class SinglePlayerUI extends Component {
   }
 
   hit() {
-    axios.post(`http://localhost:8080/game/${this.state.gameId}/hit?playerId=${this.state.playerId}`)
+    axios.post(`http://localhost:8080/game/${this.state.gameId}/hit?playerId=${this.state.playerId}`, null, {"headers": {"jwt" : this.state.jwt}})
     .then(
       (rsp) => {
         console.log(rsp);
-        axios.get(`http://localhost:8080/game/${this.state.gameId}/status?playerId=${this.state.playerId}`)
+        axios.get(`http://localhost:8080/game/${this.state.gameId}/status?playerId=${this.state.playerId}`, {"headers": {"jwt" : this.state.jwt}})
         .then((rsp) => {
             console.log(rsp);
             this.setState({ playerCards: rsp.data.playerCards });
@@ -96,17 +116,16 @@ class SinglePlayerUI extends Component {
   }
 
   stand() {
-    console.log('Starting the game!');
-    axios.post(`http://localhost:8080/game/${this.state.gameId}/stand?playerId=${this.state.playerId}`)
+    axios.post(`http://localhost:8080/game/${this.state.gameId}/stand?playerId=${this.state.playerId}`, null, {"headers": {"jwt" : this.state.jwt}})
     .then(
       (rsp) => {
         console.log(rsp);
-        axios.get(`http://localhost:8080/game/${this.state.gameId}/status?playerId=${this.state.playerId}`)
+        axios.get(`http://localhost:8080/game/${this.state.gameId}/status?playerId=${this.state.playerId}`, {"headers": {"jwt" : this.state.jwt}})
         .then((rsp) => {
             console.log(rsp);
             this.setState({ dealerCards: rsp.data.dealerCards });
 
-            axios.get(`http://localhost:8080/game/${this.state.gameId}/result?playerId=${this.state.playerId}`)
+            axios.get(`http://localhost:8080/game/${this.state.gameId}/result?playerId=${this.state.playerId}`, {"headers": {"jwt" : this.state.jwt}})
             .then((rsp) => {
               if (rsp.data.result === 1) {
                 this.setState({ result: "You win!!! Now your balance is: " + rsp.data.newBalance });
@@ -125,13 +144,10 @@ class SinglePlayerUI extends Component {
     );
   }
 
-  componentDidMount() {
-    this.getPlayerInfo()
-  }
-
   render() {
 		return (
       <Container fluid>
+        <p>BlackJack UI, hello: {this.state.displayPlayerName}</p>
         <Row style={{position: "relative", top: 20}}>
           <Col sm={1}>Dealer's Cards: </Col>
           {
@@ -200,6 +216,21 @@ class SinglePlayerUI extends Component {
               <Button onClick={() => this.bet(50)} color="primary">50</Button>
               <Button onClick={() => this.bet(100)} color="primary">100</Button>
               <Button onClick={() => this.bet(500)} color="primary">500</Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            open={this.state.currentStage === stages.LOGIN}
+            BackdropProps={{ timeout: 500 }}
+          >
+            <DialogTitle id="alert-dialog-title">Player login</DialogTitle>
+            <DialogActions>
+              <TextField id="login-email" label="Email" variant="outlined" />
+              <TextField id="login-password" label="Password" variant="outlined" />
+              <Button onClick={() => this.login(
+                document.getElementById("login-email").value, document.getElementById("login-password").value
+              )} color="primary">Login</Button>
             </DialogActions>
           </Dialog>
         </Row>
