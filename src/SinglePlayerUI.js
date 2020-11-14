@@ -17,7 +17,7 @@ class SinglePlayerUI extends Component {
 
   state = {
     gameId: '',
-    playerId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
+    playerId: '',
     playerCards: [],
     playerBalance: 0,
     dealerCards: [],
@@ -56,6 +56,23 @@ class SinglePlayerUI extends Component {
       },
       (error) => { console.log(error); }
     )
+  }
+
+  signout() {
+    this.setState(
+      {
+        gameId: '',
+        playerId: '',
+        playerCards: [],
+        playerBalance: 0,
+        dealerCards: [],
+        showResult: false,
+        result: '',
+        currentStage: stages.LOGIN,
+        jwt: '',
+        displayPlayerName: ''
+      }
+    );
   }
 
   getPlayerInfo() {
@@ -188,6 +205,7 @@ class SinglePlayerUI extends Component {
           { this.state.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.start()}>Start</Button> </Col> }
           { this.state.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => this.hit()}>Hit</Button> </Col> }
           { this.state.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => this.stand()}>Stand</Button> </Col> }
+          { this.state.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.signout()}>Sign out</Button> </Col> }
         </Row>
         <Row style={{position: "relative", top: 150}}>
           <Dialog
