@@ -51,6 +51,7 @@ class SinglePlayerUI extends Component {
       },
       (error) => {
         console.log(error);
+        document.getElementById("login-message").style.color = "red";
         document.getElementById("login-message").innerText = "Login failed, please try again~";
       }
     )
@@ -66,6 +67,7 @@ class SinglePlayerUI extends Component {
       },
       (error) => {
         console.log(error);
+        document.getElementById("signup-message").style.color = "red";
         document.getElementById("signup-message").innerText = "Signup failed, please try again~";
       }
     )
@@ -186,7 +188,7 @@ class SinglePlayerUI extends Component {
                 <Card style={{ width: '100%' }}>
                   <Card.Img variant="top" src="src/img/2.png" />
                   <Card.Body>
-                    <Card.Title>{element}</Card.Title>
+                    <Card.Title>{element.split("#")[0]}</Card.Title>
                   </Card.Body>
                 </Card>
               </Col>
@@ -204,7 +206,7 @@ class SinglePlayerUI extends Component {
                 <Card style={{ width: '100%' }}>
                   <Card.Img variant="top" src="src/img/2.png" />
                   <Card.Body>
-                    <Card.Title>{element}</Card.Title>
+                    <Card.Title>{element.split("#")[0]}</Card.Title>
                   </Card.Body>
                 </Card>
               </Col>
