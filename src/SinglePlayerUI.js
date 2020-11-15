@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import React, {Component} from 'react';
-import { Dialog, DialogActions, DialogTitle, TextField } from '@material-ui/core';
+import { Dialog, DialogActions, DialogTitle, DialogContent, TextField } from '@material-ui/core';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -45,16 +45,13 @@ class SinglePlayerUI extends Component {
     axios.post(`http://localhost:8080/player/login?email=${email}&password=${password}`)
     .then(
       (rsp) => { 
-        if (rsp.status === 200) {
-          this.setState({ jwt: rsp.data.token, playerId: rsp.data.playerId, currentStage: stages.IDLE })
-
-          this.getPlayerInfo()
-        }
-        else {
-          console.log("Bad response: " + rsp);
-        }
+        this.setState({ jwt: rsp.data.token, playerId: rsp.data.playerId, currentStage: stages.IDLE });
+        this.getPlayerInfo();
       },
-      (error) => { console.log(error); }
+      (error) => {
+        console.log(error);
+        document.getElementById("login-message").innerText = "Login failed, please try again~";
+      }
     )
   }
 
@@ -243,6 +240,7 @@ class SinglePlayerUI extends Component {
             BackdropProps={{ timeout: 500 }}
           >
             <DialogTitle id="alert-dialog-title">Player login</DialogTitle>
+            <DialogContent id="login-message" style={{color:"red"}}></DialogContent>
             <DialogActions>
               <TextField id="login-email" label="Email" variant="outlined" />
               <TextField id="login-password" label="Password" variant="outlined" />
