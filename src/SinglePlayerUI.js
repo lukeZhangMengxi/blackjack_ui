@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const stages = {
   LOGIN: 'LOGIN',
+  SIGNUP: 'SIGNUP',
   IDLE: 'IDLE',
   BET: 'BET',
   PLAYER_TURN: 'PLAYER_TURN',
@@ -50,7 +51,24 @@ class SinglePlayerUI extends Component {
       },
       (error) => {
         console.log(error);
+        document.getElementById("login-message").style.color = "red";
         document.getElementById("login-message").innerText = "Login failed, please try again~";
+      }
+    )
+  }
+
+  signup(email, password, displayName) {
+    axios.post(`http://localhost:8080/player/create?email=${email}&password=${password}&displayName=${displayName}`)
+    .then(
+      (rsp) => {
+        this.setState({currentStage: stages.LOGIN});
+        document.getElementById("login-message").style.color = "green";
+        document.getElementById("login-message").innerText = "Thank you for the signup! Please login now";
+      },
+      (error) => {
+        console.log(error);
+        document.getElementById("signup-message").style.color = "red";
+        document.getElementById("signup-message").innerText = "Signup failed, please try again~";
       }
     )
   }
@@ -170,7 +188,7 @@ class SinglePlayerUI extends Component {
                 <Card style={{ width: '100%' }}>
                   <Card.Img variant="top" src="src/img/2.png" />
                   <Card.Body>
-                    <Card.Title>{element}</Card.Title>
+                    <Card.Title>{element.split("#")[0]}</Card.Title>
                   </Card.Body>
                 </Card>
               </Col>
@@ -188,7 +206,7 @@ class SinglePlayerUI extends Component {
                 <Card style={{ width: '100%' }}>
                   <Card.Img variant="top" src="src/img/2.png" />
                   <Card.Body>
-                    <Card.Title>{element}</Card.Title>
+                    <Card.Title>{element.split("#")[0]}</Card.Title>
                   </Card.Body>
                 </Card>
               </Col>
@@ -240,13 +258,38 @@ class SinglePlayerUI extends Component {
             BackdropProps={{ timeout: 500 }}
           >
             <DialogTitle id="alert-dialog-title">Player login</DialogTitle>
-            <DialogContent id="login-message" style={{color:"red"}}></DialogContent>
-            <DialogActions>
-              <TextField id="login-email" label="Email" variant="outlined" />
+            <DialogContent>
+              <p id="login-message" style={{color:"red"}}></p>
+              <TextField id="login-email" label="Email" variant="outlined" /><br/><br/>
               <TextField id="login-password" label="Password" variant="outlined" />
+            </DialogContent>
+            <DialogActions>
               <Button onClick={() => this.login(
                 document.getElementById("login-email").value, document.getElementById("login-password").value
               )} color="primary">Login</Button>
+              <Button onClick={() => { this.setState({currentStage: stages.SIGNUP}); }} color="primary">Signup Now</Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            open={this.state.currentStage === stages.SIGNUP}
+            BackdropProps={{ timeout: 500 }}
+          >
+            <DialogTitle id="alert-dialog-title">Player Signup</DialogTitle>
+            <DialogContent>
+              <p id="signup-message" style={{color:"red"}}></p>
+              <TextField id="signup-email" label="Email" variant="outlined" /> <br/><br/>
+              <TextField id="signup-password" label="Password" variant="outlined" /> <br/><br/>
+              <TextField id="signup-displayName" label="Display Name" variant="outlined" />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => this.signup(
+                document.getElementById("signup-email").value,
+                document.getElementById("signup-password").value,
+                document.getElementById("signup-displayName").value
+              )} color="primary">Signup</Button>
+              <Button onClick={() => { this.setState({currentStage: stages.LOGIN}); }} color="primary">Cancel</Button>
             </DialogActions>
           </Dialog>
         </Row>
