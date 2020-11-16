@@ -5,6 +5,8 @@ import { Dialog, DialogActions, DialogTitle, DialogContent, TextField } from '@m
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const PokerMapper = require('./PokerMapper');
+
 const stages = {
   LOGIN: 'LOGIN',
   SIGNUP: 'SIGNUP',
@@ -100,7 +102,6 @@ class SinglePlayerUI extends Component {
 
   start() {
     console.log('Starting the game!');
-    console.log(this.state.jwt);
     axios.post(`http://localhost:8080/game/start?playerId=${this.state.playerId}`, null, {"headers": {"jwt" : this.state.jwt}})
     .then(
       (rsp) => {
@@ -184,12 +185,9 @@ class SinglePlayerUI extends Component {
           <Col sm={1}>Dealer's Cards: </Col>
           {
             this.state.dealerCards.map((element) => { return (
-              <Col sm={2}>
-                <Card style={{ width: '100%' }}>
-                  <Card.Img variant="top" src="src/img/2.png" />
-                  <Card.Body>
-                    <Card.Title>{element.split("#")[0]}</Card.Title>
-                  </Card.Body>
+              <Col sm={1}>
+                <Card style={{ width: 100 }}>
+                  <Card.Img src={ require ('./img/' + PokerMapper.getPokerImgName(element, '.png'))} />
                 </Card>
               </Col>
             )})
@@ -202,12 +200,9 @@ class SinglePlayerUI extends Component {
           <Col sm={1}>Your Cards: </Col>
           {
             this.state.playerCards.map((element) => { return (
-              <Col sm={2}>
-                <Card style={{ width: '100%' }}>
-                  <Card.Img variant="top" src="src/img/2.png" />
-                  <Card.Body>
-                    <Card.Title>{element.split("#")[0]}</Card.Title>
-                  </Card.Body>
+              <Col sm={1}>
+                <Card style={{ width: 100 }}>
+                  <Card.Img src={require ('./img/' + PokerMapper.getPokerImgName(element, '.png'))} />
                 </Card>
               </Col>
             )})
