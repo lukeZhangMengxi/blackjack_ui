@@ -187,7 +187,7 @@ class SinglePlayerUI extends Component {
             this.state.dealerCards.map((element) => { return (
               <Col sm={1}>
                 <Card style={{ width: 100 }}>
-                  <Card.Img src={ require ('./img/' + PokerMapper.getPokerImgName(element, '.png'))} />
+                  <Card.Img src={ './img/' + PokerMapper.getPokerImgName(element, '.png')} />
                 </Card>
               </Col>
             )})
@@ -202,7 +202,7 @@ class SinglePlayerUI extends Component {
             this.state.playerCards.map((element) => { return (
               <Col sm={1}>
                 <Card style={{ width: 100 }}>
-                  <Card.Img src={require ('./img/' + PokerMapper.getPokerImgName(element, '.png'))} />
+                  <Card.Img src={ './img/' + PokerMapper.getPokerImgName(element, '.png')} />
                 </Card>
               </Col>
             )})
