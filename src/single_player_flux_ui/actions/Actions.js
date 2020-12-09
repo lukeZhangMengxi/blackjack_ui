@@ -24,11 +24,14 @@ export function nav_signup() {
   };
 }
 
-export function signup(email, passowrd, name) {
+export function signup() {
   return {
-    type: PLAYER_SIGN_UP,
-    email: email,
-    passowrd: passowrd,
-    name: name
+    type: PLAYER_SIGN_UP
+  };
+}
+
+export function nav_signup_cancel() {
+  return {
+    type: NAVIGATE_SIGN_UP_CANCEL
   };
 }

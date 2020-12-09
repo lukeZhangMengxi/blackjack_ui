@@ -7,7 +7,7 @@ import { stages } from '../reducers/Reducers'
 
 export default class LoginDialog extends Component {
 
-  
+
   render() {
     return (
       <Dialog
@@ -15,8 +15,8 @@ export default class LoginDialog extends Component {
       >
         <DialogTitle>Player login</DialogTitle>
         <DialogContent>
-          <p id="login-message" style={{color:"red"}}></p>
-          <TextField id="login-email" label="Email" variant="outlined" /><br/><br/>
+          <p id="login-message" style={{ color: "red" }}></p>
+          <TextField id="login-email" label="Email" variant="outlined" /><br /><br />
           <TextField id="login-password" label="Password" variant="outlined" />
         </DialogContent>
         <DialogActions>
@@ -24,7 +24,7 @@ export default class LoginDialog extends Component {
             document.getElementById("login-email").value,
             document.getElementById("login-password").value
           )} color="primary">Login</Button>
-          <Button onClick={() => console.log('...Clicked on Signup')} color="primary">Signup Now</Button>
+          <Button onClick={() => this.props.onNavSignupClick()} color="primary">Signup Now</Button>
         </DialogActions>
       </Dialog>
     )
@@ -32,18 +32,18 @@ export default class LoginDialog extends Component {
 
   login(email, password) {
     axios.post(`http://localhost:8080/player/login?email=${email}&password=${password}`)
-    .then(
-      (rsp) => { 
-        this.props.onPlayerLoginClick(
-          rsp.data.playerId,
-          rsp.data.token
-        );
-      },
-      (error) => {
-        console.log(error);
-        document.getElementById("login-message").style.color = "red";
-        document.getElementById("login-message").innerText = "Login failed, please try again~";
-      }
-    )
+      .then(
+        (rsp) => {
+          this.props.onPlayerLoginClick(
+            rsp.data.playerId,
+            rsp.data.token
+          );
+        },
+        (error) => {
+          console.log(error);
+          document.getElementById("login-message").style.color = "red";
+          document.getElementById("login-message").innerText = "Login failed, please try again~";
+        }
+      )
   }
 }
