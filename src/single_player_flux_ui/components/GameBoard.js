@@ -46,13 +46,28 @@ export default class GameBoard extends Component {
           <Col>Current Balance: {this.props.playerBalance}</Col>
         </Row>
         <Row style={{ position: "relative", top: 150 }}>
-          {this.props.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => console.log('start')}>Start</Button> </Col>}
+          {this.props.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.start()}>Start</Button> </Col>}
           {this.props.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => console.log('hit')}>Hit</Button> </Col>}
           {this.props.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => console.log('stand')}>Stand</Button> </Col>}
-          {this.props.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => console.log('signout')}>Sign out</Button> </Col>}
+          {this.props.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.props.onSignOutClick()}>Sign out</Button> </Col>}
         </Row>
       </Container>
     )
+  }
+
+  start() {
+    axios.post(`http://localhost:8080/game/start?playerId=${this.props.playerId}`, null, {"headers": {"jwt" : this.props.jwt}})
+    .then(
+      (rsp) => {
+        let gameId = rsp.data;
+        axios.get(`http://localhost:8080/game/${gameId}/status?playerId=${this.props.playerId}`, {"headers": {"jwt" : this.props.jwt}})
+        .then((rsp) => {
+            this.props.onGameStartClick(gameId, [...rsp.data.dealerCards], [...rsp.data.playerCards]);
+            this.props.updateParent();
+        });
+      },
+      (error) => { console.log(error); }
+    );
   }
 
 }

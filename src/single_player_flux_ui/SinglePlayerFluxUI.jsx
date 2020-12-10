@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { login, nav_signup, signup, nav_signup_cancel } from './actions/Actions.js'
+import { player_login, nav_signup, player_signup, nav_signup_cancel, nav_signout, sp_game_start } from './actions/Actions.js'
 
 import LoginDialog from './components/LoginDialog'
 import SignupDialog from './components/SignupDialog'
@@ -16,20 +16,25 @@ class SinglePlayerFluxUI extends Component {
       <div>
         <LoginDialog
           currentStage={myState.stage}
-          onPlayerLoginClick={(playerId, jwt) => dispatch(login(playerId, jwt))}
+          onPlayerLoginClick={(playerId, jwt) => dispatch(player_login(playerId, jwt))}
           onNavSignupClick={() => dispatch(nav_signup())}
         />
         <SignupDialog
           currentStage={myState.stage}
-          onPlayerSignupClick={() => dispatch(signup())}
+          onPlayerSignupClick={() => dispatch(player_signup())}
           onCancelClick={() => dispatch(nav_signup_cancel())}
         />
         <GameBoard
           currentStage={myState.stage}
+          playerId={myState.playerId}
+          jwt={myState.jwt}
           dealerCards={myState.dealerCards || []}
           playerCards={myState.playerCards || []}
           playerBalance={myState.playerBalance}
           playerName={myState.playerName}
+          updateParent={this.forceUpdate.bind(this)}
+          onSignOutClick={() => dispatch(nav_signout())}
+          onGameStartClick={(gameId, dealerCards, playerCards) => dispatch(sp_game_start(gameId, dealerCards, playerCards))}
         />
       </div>
     )

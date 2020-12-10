@@ -6,7 +6,9 @@ export default function loginPageReducer(action) {
     case PLAYER_LOGIN:
       console.log('Player login now: ' + action.playerId + ' : ' + action.jwt);
       return {
-        stage: stages.IDLE
+        stage: stages.IDLE,
+        playerId: action.playerId,
+        jwt: action.jwt
       };
     case NAVIGATE_SIGN_UP:
       console.log('Player navigate to signup page');
