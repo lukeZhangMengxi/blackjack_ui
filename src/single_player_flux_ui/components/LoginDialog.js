@@ -34,10 +34,20 @@ export default class LoginDialog extends Component {
     axios.post(`http://localhost:8080/player/login?email=${email}&password=${password}`)
       .then(
         (rsp) => {
-          this.props.onPlayerLoginClick(
-            rsp.data.playerId,
-            rsp.data.token
-          );
+          let playerId = rsp.data.playerId;
+          let jwt = rsp.data.token;
+          axios.get(`http://localhost:8080/player/${playerId}`, { "headers": { "jwt": jwt } })
+            .then(
+              (rsp) => {
+                this.props.onPlayerLoginClick(
+                  playerId,
+                  jwt,
+                  rsp.data.displayName,
+                  rsp.data.balance
+                );
+              },
+              (error) => { console.log(error); }
+            )
         },
         (error) => {
           console.log(error);
