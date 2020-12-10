@@ -8,7 +8,9 @@ export default function loginPageReducer(action) {
       return {
         stage: stages.IDLE,
         playerId: action.playerId,
-        jwt: action.jwt
+        jwt: action.jwt,
+        playerName: action.playerName,
+        playerBalance: action.playerBalance
       };
     case NAVIGATE_SIGN_UP:
       console.log('Player navigate to signup page');

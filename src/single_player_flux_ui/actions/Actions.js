@@ -10,11 +10,13 @@ export const SP_GAME_START = 'SP_GAME_START';
 // export const NAVIGATE_FINISH = 'NAVIGATE_FINISH';
 
 
-export function player_login(playerId, jwt) {
+export function player_login(playerId, jwt, playerName, playerBalance) {
   return {
     type: PLAYER_LOGIN,
     playerId: playerId,
-    jwt: jwt
+    jwt: jwt,
+    playerName: playerName,
+    playerBalance: playerBalance
   };
 }
 

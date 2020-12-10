@@ -16,7 +16,7 @@ class SinglePlayerFluxUI extends Component {
       <div>
         <LoginDialog
           currentStage={myState.stage}
-          onPlayerLoginClick={(playerId, jwt) => dispatch(player_login(playerId, jwt))}
+          onPlayerLoginClick={(playerId, jwt, playerName, playerBalance) => dispatch(player_login(playerId, jwt, playerName, playerBalance))}
           onNavSignupClick={() => dispatch(nav_signup())}
         />
         <SignupDialog
