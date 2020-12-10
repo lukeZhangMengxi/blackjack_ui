@@ -4,7 +4,7 @@ export const NAVIGATE_SIGN_UP_CANCEL = 'NAVIGATE_SIGN_UP_CANCEL';
 export const PLAYER_SIGN_UP = 'PLAYER_SIGN_UP';
 export const NAVIGATE_SIGN_OUT = 'NAVIGATE_SIGN_OUT';
 export const SP_GAME_START = 'SP_GAME_START';
-// export const SP_GAME_BET = 'SP_GAME_BET';
+export const SP_GAME_BET = 'SP_GAME_BET';
 // export const SP_GAME_HIT = 'SP_GAME_HIT';
 // export const SP_GAME_STAND = 'SP_GAME_STAND';
 // export const NAVIGATE_FINISH = 'NAVIGATE_FINISH';
@@ -45,11 +45,17 @@ export function nav_signup_cancel() {
 }
 
 export function sp_game_start(gameId, dealerCards, playerCards) {
-  console.log(dealerCards);
   return {
     type: SP_GAME_START,
     gameId: gameId,
     dealerCards: dealerCards,
     playerCards: playerCards
+  }
+}
+
+export function sp_game_bet(newBalance) {
+  return {
+    type: SP_GAME_BET,
+    newBalance: newBalance
   }
 }
