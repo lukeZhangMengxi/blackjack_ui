@@ -10,7 +10,6 @@ class Home extends React.Component {
         <h6>Please select a game to play:</h6>
         <ul>
           <li><Link to="/game">Single Player Game</Link></li>
-          <li><Link to="/game_flux">Single Player Game Flux</Link></li>
         </ul>
       </div>
     )
