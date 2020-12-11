@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux'
+
 import loginPageReducer from './LoginPageReducer'
 import signupPageReducer from './SignupPageReducer'
-import { idleStateReducer, betStateReducer, playerTurnStateReducer, dealerTurnStateReducer, resultPendingStateReducer } from './GameBoardReducer'
+import { idleStateReducer, betStateReducer, playerTurnStateReducer, dealerTurnStateReducer, prepareResultStateReducer, showResultStateReducer } from './GameBoardReducer'
 
 
 export const stages = {
@@ -26,7 +27,8 @@ function nextStage(state = {}, action) {
     case stages.BET: return betStateReducer(state, action);
     case stages.PLAYER_TURN: return playerTurnStateReducer(state, action);
     case stages.DEALER_TURN: return dealerTurnStateReducer(state, action);
-    case stages.PREPARE_RESULT: return resultPendingStateReducer(state, action);
+    case stages.PREPARE_RESULT: return prepareResultStateReducer(state, action);
+    case stages.SHOW_RESULT: return showResultStateReducer(state, action);
     default: return {
       stage: stages.LOGIN
     };

@@ -89,3 +89,9 @@ export function sp_game_result_ready(resultMessage, newBalance) {
     newBalance: newBalance
   }
 }
+
+export function nav_finish() {
+  return {
+    type: NAVIGATE_FINISH
+  }
+}
