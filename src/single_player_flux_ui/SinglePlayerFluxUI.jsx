@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { player_login, nav_signup, player_signup, nav_signup_cancel, nav_signout, sp_game_start, sp_game_bet, sp_game_hit, sp_game_stand } from './actions/Actions.js'
+import { player_login, nav_signup, player_signup, nav_signup_cancel, nav_signout, sp_game_start, sp_game_bet, sp_game_hit, sp_game_stand, sp_game_dealer_done, sp_game_result_ready, nav_finish } from './actions/Actions.js'
 
 import LoginDialog from './components/LoginDialog'
 import SignupDialog from './components/SignupDialog'
 import GameBoard from './components/GameBoard'
 import BetDialog from './components/BetDialog'
+import ResultDialog from './components/ResultDialog'
 
 
 class SinglePlayerFluxUI extends Component {
@@ -33,6 +34,12 @@ class SinglePlayerFluxUI extends Component {
           updateParent={this.forceUpdate.bind(this)}
           onBetClick={(newBalance) => dispatch(sp_game_bet(newBalance))}
         />
+        <ResultDialog
+          currentStage={myState.stage}
+          resultMessage={myState.resultMessage}
+          updateParent={this.forceUpdate.bind(this)}
+          onFinishClick={() => dispatch(nav_finish())}
+        />
         <GameBoard
           currentStage={myState.stage}
           gameId={myState.gameId}
@@ -46,7 +53,9 @@ class SinglePlayerFluxUI extends Component {
           onSignOutClick={() => dispatch(nav_signout())}
           onGameStartClick={(gameId, dealerCards, playerCards) => dispatch(sp_game_start(gameId, dealerCards, playerCards))}
           onGameHitClick={(playerCards) => dispatch(sp_game_hit(playerCards))}
-          onGameStandClick={(dealerCards) => dispatch(sp_game_stand(dealerCards))}
+          onGameStandClick={() => dispatch(sp_game_stand())}
+          dealerDone={(dealerCards) => dispatch(sp_game_dealer_done(dealerCards))}
+          resultReady={(resultMessage, newBalance) => dispatch(sp_game_result_ready(resultMessage, newBalance))}
         />
       </div>
     )
