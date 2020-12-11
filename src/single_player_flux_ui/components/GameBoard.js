@@ -47,7 +47,7 @@ export default class GameBoard extends Component {
         </Row>
         <Row style={{ position: "relative", top: 150 }}>
           {this.props.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.start()}>Start</Button> </Col>}
-          {this.props.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => console.log('hit')}>Hit</Button> </Col>}
+          {this.props.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => this.hit()}>Hit</Button> </Col>}
           {this.props.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => console.log('stand')}>Stand</Button> </Col>}
           {this.props.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.props.onSignOutClick()}>Sign out</Button> </Col>}
         </Row>
@@ -63,6 +63,22 @@ export default class GameBoard extends Component {
         axios.get(`http://localhost:8080/game/${gameId}/status?playerId=${this.props.playerId}`, {"headers": {"jwt" : this.props.jwt}})
         .then((rsp) => {
             this.props.onGameStartClick(gameId, [...rsp.data.dealerCards], [...rsp.data.playerCards]);
+            this.props.updateParent();
+        });
+      },
+      (error) => { console.log(error); }
+    );
+  }
+
+  hit() {
+    axios.post(`http://localhost:8080/game/${this.props.gameId}/hit?playerId=${this.props.playerId}`, null, {"headers": {"jwt" : this.props.jwt}})
+    .then(
+      (rsp) => {
+        console.log(rsp);
+        axios.get(`http://localhost:8080/game/${this.props.gameId}/status?playerId=${this.props.playerId}`, {"headers": {"jwt" : this.props.jwt}})
+        .then((rsp) => {
+            console.log(rsp);
+            this.props.onGameHitClick(rsp.data.playerCards);
             this.props.updateParent();
         });
       },

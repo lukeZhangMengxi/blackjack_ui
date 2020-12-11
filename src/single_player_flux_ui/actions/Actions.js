@@ -5,7 +5,7 @@ export const PLAYER_SIGN_UP = 'PLAYER_SIGN_UP';
 export const NAVIGATE_SIGN_OUT = 'NAVIGATE_SIGN_OUT';
 export const SP_GAME_START = 'SP_GAME_START';
 export const SP_GAME_BET = 'SP_GAME_BET';
-// export const SP_GAME_HIT = 'SP_GAME_HIT';
+export const SP_GAME_HIT = 'SP_GAME_HIT';
 // export const SP_GAME_STAND = 'SP_GAME_STAND';
 // export const NAVIGATE_FINISH = 'NAVIGATE_FINISH';
 
@@ -57,5 +57,12 @@ export function sp_game_bet(newBalance) {
   return {
     type: SP_GAME_BET,
     newBalance: newBalance
+  }
+}
+
+export function sp_game_hit(playerCards) {
+  return {
+    type: SP_GAME_HIT,
+    playerCards: playerCards
   }
 }
