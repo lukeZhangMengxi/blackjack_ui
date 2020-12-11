@@ -7,7 +7,8 @@ export const SP_GAME_START = 'SP_GAME_START';
 export const SP_GAME_BET = 'SP_GAME_BET';
 export const SP_GAME_HIT = 'SP_GAME_HIT';
 export const SP_GAME_STAND = 'SP_GAME_STAND';
-// export const NAVIGATE_FINISH = 'NAVIGATE_FINISH';
+export const SP_GAME_DEALER_DONE = 'SP_GAME_DEALER_DONE';
+export const NAVIGATE_FINISH = 'NAVIGATE_FINISH';
 
 
 export function player_login(playerId, jwt, playerName, playerBalance) {
@@ -67,9 +68,15 @@ export function sp_game_hit(playerCards) {
   }
 }
 
-export function sp_game_stand(dealerCards) {
+export function sp_game_stand() {
   return {
-    type: SP_GAME_STAND,
+    type: SP_GAME_STAND
+  }
+}
+
+export function sp_game_dealer_done(dealerCards) {
+  return {
+    type: SP_GAME_DEALER_DONE,
     dealerCards: dealerCards
   }
 }

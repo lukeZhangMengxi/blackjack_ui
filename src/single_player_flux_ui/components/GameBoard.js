@@ -91,10 +91,11 @@ export default class GameBoard extends Component {
       .then(
         (rsp) => {
           console.log(rsp);
+          this.props.onGameStandClick();
           axios.get(`http://localhost:8080/game/${this.props.gameId}/status?playerId=${this.props.playerId}`, { "headers": { "jwt": this.props.jwt } })
             .then((rsp) => {
               console.log(rsp);
-              this.props.onGameStandClick(rsp.data.dealerCards);
+              this.props.dealerDone(rsp.data.dealerCards)
               this.props.updateParent();
 
               // axios.get(`http://localhost:8080/game/${this.props.gameId}/result?playerId=${this.props.playerId}`, {"headers": {"jwt" : this.props.jwt}})
