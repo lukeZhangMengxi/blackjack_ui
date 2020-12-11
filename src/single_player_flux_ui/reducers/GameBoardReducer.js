@@ -1,4 +1,4 @@
-import { SP_GAME_START, NAVIGATE_SIGN_OUT, SP_GAME_BET, SP_GAME_HIT, SP_GAME_STAND, SP_GAME_DEALER_DONE } from '../actions/Actions'
+import { SP_GAME_START, NAVIGATE_SIGN_OUT, SP_GAME_BET, SP_GAME_HIT, SP_GAME_STAND, SP_GAME_DEALER_DONE, SP_GAME_RESULT_READY } from '../actions/Actions'
 import { stages } from './Reducers'
 
 export function idleStateReducer(state, action) {
@@ -44,8 +44,19 @@ export function playerTurnStateReducer(state, action) {
 export function dealerTurnStateReducer(state, action) {
   switch (action.type) {
     case SP_GAME_DEALER_DONE:
-      state.stage = stages.RESULT;
+      state.stage = stages.PREPARE_RESULT;
       state.dealerCards = action.dealerCards;
+      console.log(state);
+      return state;
+  }
+}
+
+export function resultPendingStateReducer(state, action) {
+  switch (action.type) {
+    case SP_GAME_RESULT_READY:
+      state.stage = stages.SHOW_RESULT;
+      state.resultMessage = action.resultMessage;
+      state.playerBalance = action.newBalance;
       console.log(state);
       return state;
   }
