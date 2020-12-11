@@ -48,7 +48,7 @@ export default class GameBoard extends Component {
         <Row style={{ position: "relative", top: 150 }}>
           {this.props.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.start()}>Start</Button> </Col>}
           {this.props.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => this.hit()}>Hit</Button> </Col>}
-          {this.props.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => console.log('stand')}>Stand</Button> </Col>}
+          {this.props.currentStage === stages.PLAYER_TURN && <Col sm={2} offset={2}> <Button onClick={() => this.stand()}>Stand</Button> </Col>}
           {this.props.currentStage === stages.IDLE && <Col sm={2} offset={2}> <Button onClick={() => this.props.onSignOutClick()}>Sign out</Button> </Col>}
         </Row>
       </Container>
@@ -56,34 +56,64 @@ export default class GameBoard extends Component {
   }
 
   start() {
-    axios.post(`http://localhost:8080/game/start?playerId=${this.props.playerId}`, null, {"headers": {"jwt" : this.props.jwt}})
-    .then(
-      (rsp) => {
-        let gameId = rsp.data;
-        axios.get(`http://localhost:8080/game/${gameId}/status?playerId=${this.props.playerId}`, {"headers": {"jwt" : this.props.jwt}})
-        .then((rsp) => {
-            this.props.onGameStartClick(gameId, [...rsp.data.dealerCards], [...rsp.data.playerCards]);
-            this.props.updateParent();
-        });
-      },
-      (error) => { console.log(error); }
-    );
+    axios.post(`http://localhost:8080/game/start?playerId=${this.props.playerId}`, null, { "headers": { "jwt": this.props.jwt } })
+      .then(
+        (rsp) => {
+          let gameId = rsp.data;
+          axios.get(`http://localhost:8080/game/${gameId}/status?playerId=${this.props.playerId}`, { "headers": { "jwt": this.props.jwt } })
+            .then((rsp) => {
+              this.props.onGameStartClick(gameId, [...rsp.data.dealerCards], [...rsp.data.playerCards]);
+              this.props.updateParent();
+            });
+        },
+        (error) => { console.log(error); }
+      );
   }
 
   hit() {
-    axios.post(`http://localhost:8080/game/${this.props.gameId}/hit?playerId=${this.props.playerId}`, null, {"headers": {"jwt" : this.props.jwt}})
-    .then(
-      (rsp) => {
-        console.log(rsp);
-        axios.get(`http://localhost:8080/game/${this.props.gameId}/status?playerId=${this.props.playerId}`, {"headers": {"jwt" : this.props.jwt}})
-        .then((rsp) => {
-            console.log(rsp);
-            this.props.onGameHitClick(rsp.data.playerCards);
-            this.props.updateParent();
-        });
-      },
-      (error) => { console.log(error); }
-    );
+    axios.post(`http://localhost:8080/game/${this.props.gameId}/hit?playerId=${this.props.playerId}`, null, { "headers": { "jwt": this.props.jwt } })
+      .then(
+        (rsp) => {
+          console.log(rsp);
+          axios.get(`http://localhost:8080/game/${this.props.gameId}/status?playerId=${this.props.playerId}`, { "headers": { "jwt": this.props.jwt } })
+            .then((rsp) => {
+              console.log(rsp);
+              this.props.onGameHitClick(rsp.data.playerCards);
+              this.props.updateParent();
+            });
+        },
+        (error) => { console.log(error); }
+      );
+  }
+
+  stand() {
+    axios.post(`http://localhost:8080/game/${this.props.gameId}/stand?playerId=${this.props.playerId}`, null, { "headers": { "jwt": this.props.jwt } })
+      .then(
+        (rsp) => {
+          console.log(rsp);
+          axios.get(`http://localhost:8080/game/${this.props.gameId}/status?playerId=${this.props.playerId}`, { "headers": { "jwt": this.props.jwt } })
+            .then((rsp) => {
+              console.log(rsp);
+              this.props.onGameStandClick(rsp.data.dealerCards);
+              this.props.updateParent();
+
+              // axios.get(`http://localhost:8080/game/${this.props.gameId}/result?playerId=${this.props.playerId}`, {"headers": {"jwt" : this.props.jwt}})
+              // .then((rsp) => {
+              //   if (rsp.data.result === 1) {
+              //     this.setState({ result: "You win!!! Now your balance is: " + rsp.data.newBalance });
+              //   } else if (rsp.data.result === 0) {
+              //     this.setState({ result: "Tied game! Now your balance is: " + rsp.data.newBalance });
+              //   } else if (rsp.data.result === -1) {
+              //     this.setState({ result: "You lose... Now your balance is: " + rsp.data.newBalance });
+              //   }
+
+              //   this.handleShowResultWithDelay(1.5);
+              //   this.setState({ playerBalance: rsp.data.newBalance });
+              // });
+            });
+        },
+        (error) => { console.log(error); }
+      );
   }
 
 }

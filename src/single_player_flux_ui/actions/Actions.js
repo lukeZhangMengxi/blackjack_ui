@@ -6,7 +6,7 @@ export const NAVIGATE_SIGN_OUT = 'NAVIGATE_SIGN_OUT';
 export const SP_GAME_START = 'SP_GAME_START';
 export const SP_GAME_BET = 'SP_GAME_BET';
 export const SP_GAME_HIT = 'SP_GAME_HIT';
-// export const SP_GAME_STAND = 'SP_GAME_STAND';
+export const SP_GAME_STAND = 'SP_GAME_STAND';
 // export const NAVIGATE_FINISH = 'NAVIGATE_FINISH';
 
 
@@ -64,5 +64,12 @@ export function sp_game_hit(playerCards) {
   return {
     type: SP_GAME_HIT,
     playerCards: playerCards
+  }
+}
+
+export function sp_game_stand(dealerCards) {
+  return {
+    type: SP_GAME_STAND,
+    dealerCards: dealerCards
   }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { player_login, nav_signup, player_signup, nav_signup_cancel, nav_signout, sp_game_start, sp_game_bet, sp_game_hit } from './actions/Actions.js'
+import { player_login, nav_signup, player_signup, nav_signup_cancel, nav_signout, sp_game_start, sp_game_bet, sp_game_hit, sp_game_stand } from './actions/Actions.js'
 
 import LoginDialog from './components/LoginDialog'
 import SignupDialog from './components/SignupDialog'
@@ -46,6 +46,7 @@ class SinglePlayerFluxUI extends Component {
           onSignOutClick={() => dispatch(nav_signout())}
           onGameStartClick={(gameId, dealerCards, playerCards) => dispatch(sp_game_start(gameId, dealerCards, playerCards))}
           onGameHitClick={(playerCards) => dispatch(sp_game_hit(playerCards))}
+          onGameStandClick={(dealerCards) => dispatch(sp_game_stand(dealerCards))}
         />
       </div>
     )

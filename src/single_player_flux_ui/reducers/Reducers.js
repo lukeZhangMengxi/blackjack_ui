@@ -10,6 +10,7 @@ export const stages = {
   IDLE: 'IDLE',
   BET: 'BET',
   PLAYER_TURN: 'PLAYER_TURN',
+  DEALER_TURN: 'DEALER_TURN',
   PENDING: 'PENDING'
 }
 
