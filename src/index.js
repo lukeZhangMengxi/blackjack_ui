@@ -5,8 +5,9 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 
 import Home from './Home.js';
-import SinglePlayerFluxUI from './single_player_flux_ui/SinglePlayerFluxUI';
-import rootReducer from './single_player_flux_ui/reducers/Reducers'
+import SinglePlayerGame from './single_player_game/SinglePlayerGame';
+import MultiPlayerGame from './multi_player_game/MultiPlayerGame'
+import rootReducer from './single_player_game/reducers/Reducers'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -17,7 +18,8 @@ ReactDOM.render(
     <Router history={browserHistory}>
       <Route path="/">
         <IndexRoute component={Home} />
-        <Route path="game" component={SinglePlayerFluxUI} />
+        <Route path="sp_game" component={SinglePlayerGame} />
+        <Route path="mp_game" component={MultiPlayerGame} />
       </Route>
     </Router>
   </Provider>,

@@ -9,7 +9,8 @@ class Home extends React.Component {
         <h1>Welcome to the Game Center</h1>
         <h6>Please select a game to play:</h6>
         <ul>
-          <li><Link to="/game">Single Player Game</Link></li>
+          <li><Link to="/sp_game">Single-Player Game</Link></li>
+          <li><Link to="/mp_game">Multi-Player Game</Link></li>
         </ul>
       </div>
     )

@@ -9,7 +9,7 @@ import BetDialog from './components/BetDialog'
 import ResultDialog from './components/ResultDialog'
 
 
-class SinglePlayerFluxUI extends Component {
+class SinglePlayerGame extends Component {
   render() {
     const { dispatch, myState } = this.props
 
@@ -68,4 +68,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(SinglePlayerFluxUI);
+export default connect(mapStateToProps)(SinglePlayerGame);
