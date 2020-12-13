@@ -4,7 +4,7 @@ import { Router, IndexRoute, Route, browserHistory } from 'react-router'
 
 import Home from './Home.js'
 import SinglePlayerGameWrapper from './single_player_game/index'
-import MultiPlayerGame from './multi_player_game/MultiPlayerGame'
+import MultiPlayerGameWrapper from './multi_player_game/index'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -14,7 +14,7 @@ ReactDOM.render(
     <Route path="/">
       <IndexRoute component={Home} />
       <Route path="sp_game" component={SinglePlayerGameWrapper} />
-      <Route path="mp_game" component={MultiPlayerGame} />
+      <Route path="mp_game" component={MultiPlayerGameWrapper} />
     </Route>
   </Router>,
 
