@@ -1,28 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Router, IndexRoute, Route, browserHistory } from 'react-router';
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Router, IndexRoute, Route, browserHistory } from 'react-router'
 
-import Home from './Home.js';
-import SinglePlayerGame from './single_player_game/SinglePlayerGame';
+import Home from './Home.js'
+import SinglePlayerGameWrapper from './single_player_game/index'
 import MultiPlayerGame from './multi_player_game/MultiPlayerGame'
-import rootReducer from './single_player_game/reducers/Reducers'
 
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
 
-let store = createStore(rootReducer)
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Router history={browserHistory}>
-      <Route path="/">
-        <IndexRoute component={Home} />
-        <Route path="sp_game" component={SinglePlayerGame} />
-        <Route path="mp_game" component={MultiPlayerGame} />
-      </Route>
-    </Router>
-  </Provider>,
+  <Router history={browserHistory}>
+    <Route path="/">
+      <IndexRoute component={Home} />
+      <Route path="sp_game" component={SinglePlayerGameWrapper} />
+      <Route path="mp_game" component={MultiPlayerGame} />
+    </Route>
+  </Router>,
 
   document.getElementById('root')
 );
