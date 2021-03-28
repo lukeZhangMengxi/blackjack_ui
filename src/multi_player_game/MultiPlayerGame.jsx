@@ -27,6 +27,7 @@ class MultiPlayerGame extends Component {
         />
         <GameList
           currentStage={myState.stage}
+          playerName={myState.playerName}
         />
       </div>
     )
