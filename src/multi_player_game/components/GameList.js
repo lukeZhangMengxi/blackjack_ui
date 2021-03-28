@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { Component } from 'react'
 import { List, ListItem, ListItemText } from '@material-ui/core'
 import { Button } from 'react-bootstrap'
@@ -41,17 +42,26 @@ const mockGameListRsp = {
 
 export default class GameList extends Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      games: []
+    };
+    this.refersh_game_list();
+  }
+
 
   render() {
     return (
       <div class="centered" style={{ width: "70%" }}>
-        <br/>
-        <Button>Create New Game</Button> <Button>Refresh List</Button>
+        <p>BlackJack UI, hello: {this.props.playerName}</p>
+        <Button>Create New Game</Button> <Button onClick={() => this.refersh_game_list()}>Refresh List</Button>
         <br/><br/><br/>
         <b>List of Games:</b>
         <List>
           {
-            mockGameListRsp.games.map((element) => {
+            this.state.games.map((element) => {
               if (!element.started) {
                 return (
                   <ListItem style={{ margin: "3px", background: "#DCDCDC" }}>
@@ -67,6 +77,13 @@ export default class GameList extends Component {
         </List>
       </div>
     )
+  }
+
+  refersh_game_list() {
+    axios.get(`http://localhost:8080/mpgame/list`)
+      .then((rsp) => {
+        this.state.games = rsp.data.games;
+      });
   }
 
 }
