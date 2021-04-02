@@ -56,8 +56,8 @@ export default class GameList extends Component {
     return (
       <div class="centered" style={{ width: "70%" }}>
         <p>BlackJack UI, hello: {this.props.playerName}</p>
-        <Button>Create New Game</Button> <Button onClick={() => this.refersh_game_list()}>Refresh List</Button>
-        <br/><br/><br/>
+        <Button onClick={() => this.create_game()}>Create New Game</Button> <Button onClick={() => this.refersh_game_list()}>Refresh List</Button>
+        <br /><br /><br />
         <b>List of Games:</b>
         <List>
           {
@@ -83,7 +83,18 @@ export default class GameList extends Component {
     axios.get(`http://localhost:8080/mpgame/list`)
       .then((rsp) => {
         this.state.games = rsp.data.games;
+        this.props.updateParent();
       });
+  }
+
+  create_game() {
+    axios.post(
+      `http://localhost:8080/mpgame/create?ownerId=${this.props.playerId}`,
+      null,
+      { "headers": { "jwt": this.props.jwt } }
+    ).then((rsp) => {
+      this.refersh_game_list();
+    });
   }
 
 }

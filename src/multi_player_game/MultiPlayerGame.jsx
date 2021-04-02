@@ -28,6 +28,9 @@ class MultiPlayerGame extends Component {
         <GameList
           currentStage={myState.stage}
           playerName={myState.playerName}
+          jwt={myState.jwt}
+          playerId={myState.playerId}
+          updateParent={this.forceUpdate.bind(this)}
         />
       </div>
     )
