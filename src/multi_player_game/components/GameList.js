@@ -61,14 +61,14 @@ export default class GameList extends Component {
         <b>List of Games:</b>
         <List>
           {
-            this.state.games.map((element) => {
-              if (!element.started) {
+            this.state.games.map((game) => {
+              if (!game.started) {
                 return (
                   <ListItem style={{ margin: "3px", background: "#DCDCDC" }}>
                     <ListItemText>
-                      Game with: <b>{element.playerNames.join(', ')}</b>
+                      Game with: <b>{game.playerNames.join(', ')}</b>
                     </ListItemText>
-                    <Button>Join</Button>
+                    <Button onClick={() => this.join_game(game.id)}>Join</Button>
                   </ListItem>
                 )
               }
@@ -90,6 +90,16 @@ export default class GameList extends Component {
   create_game() {
     axios.post(
       `http://localhost:8080/mpgame/create?ownerId=${this.props.playerId}`,
+      null,
+      { "headers": { "jwt": this.props.jwt } }
+    ).then((rsp) => {
+      this.refersh_game_list();
+    });
+  }
+
+  join_game(gameId) {
+    axios.post(
+      `http://localhost:8080/mpgame/join/${gameId}?playerId=${this.props.playerId}`,
       null,
       { "headers": { "jwt": this.props.jwt } }
     ).then((rsp) => {
